@@ -1,0 +1,8 @@
+node_modules
+.bin
+sing-box.json
+nezha-config.yaml
+hy2_*.pem
+*.log
+tmp
+.git
