@@ -1221,8 +1221,23 @@ function toMiB(s) {
   return parseInt(String(s).replace(/M$/, ""), 10) || 0;
 }
 
+async function osRelease() {
+  try {
+    const text = await readText("/etc/os-release");
+    const m = text.match(/^PRETTY_NAME[=](.+)$/m);
+    if (m) return m[1].trim().replace(/^"|"$/g, "");
+    const m2 = text.match(/^ID[=](.+)$/m);
+    if (m2) return m2[1].trim().replace(/^"|"$/g, "");
+    const m3 = text.match(/^ID_LIKE[=](.+)$/m);
+    if (m3) return m3[1].trim().replace(/^"|"$/g, "").split(/\s+/)[0];
+    return "Linux";
+  } catch {
+    return "Linux";
+  }
+}
+
 async function hostMeta() {
-  const osName = platform() === "linux" ? "Linux" : platform();
+  const osName = platform() === "linux" ? await osRelease() : platform();
   const a = arch() === "x64" ? "amd64" : arch() === "arm64" ? "arm64" : arch();
   let kernel = "";
   let cpuModel = "";
